@@ -5,10 +5,11 @@ echarts-vue
 
 起步
 --
-
+```
 vue create echarts-vue
 cd echarts-vue
 yarn add echarts
+```
 
 使用
 --
