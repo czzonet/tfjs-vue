@@ -42,6 +42,15 @@ export function convertToTensor(data = []) {
   })
 }
 
+/**
+ * 训练模型
+ *
+ * @param   {[type]}  model   [model description]
+ * @param   {[type]}  inputs  [inputs description]
+ * @param   {[type]}  labels  [labels description]
+ *
+ * @return  {[type]}          [return description]
+ */
 export async function trainModel(model, inputs, labels) {
   model.compile({
     optimizer: tf.train.adam(),
@@ -62,4 +71,35 @@ export async function trainModel(model, inputs, labels) {
       { height: 200, callbacks: ['onEpochEnd'] }
     )
   })
+}
+
+export function testModel(model, inputData, normalizationData) {
+  const { inputMax, inputMin, labelMax, labelMin } = normalizationData
+
+  const [xs, preds] = tf.tidy(() => {
+    const xs = tf.linspace(0, 1, 100)
+    const preds = model.predict(xs.reshape([100, 1]))
+
+    const unNormXs = xs.mul(inputMax.sub(inputMin)).add(inputMin)
+    const unNormPreds = preds.mul(labelMax.sub(labelMin)).add(labelMin)
+
+    return [unNormXs.dataSync(), unNormPreds.dataSync()]
+  })
+  // TODO: 返回echarts数据
+  const predictedPoints = Array.from(xs).map((val, i) => {
+    return { x: val, y: preds[i] }
+  })
+  const originalPoints = inputData.map(d => {
+    return { x: d[0], y: d[1] }
+  })
+
+  tfvis.render.scatterplot(
+    { name: 'Model Predictions vs Original Data' },
+    { values: [originalPoints, predictedPoints], series: ['original', 'predicted'] },
+    {
+      xLabel: 'horsepower',
+      yLabel: 'mpg',
+      height: 300
+    }
+  )
 }

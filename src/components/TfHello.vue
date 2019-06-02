@@ -12,7 +12,12 @@ import * as tfvis from "@tensorflow/tfjs-vis";
 import * as tf from "@tensorflow/tfjs";
 
 import getTrainData from "../utils/traindata.js";
-import { createModel, convertToTensor, trainModel } from "../utils/model.js";
+import {
+  createModel,
+  convertToTensor,
+  trainModel,
+  testModel
+} from "../utils/model.js";
 
 export default {
   name: "ScatterChart",
@@ -30,10 +35,14 @@ export default {
         { name: "Model summary", tab: "Model Inspection" },
         model
       );
-
-      let { inputs, labels } = convertToTensor(this.output);
+      /* 准备数据 */
+      let noramlizationData = convertToTensor(this.output);
+      let { inputs, labels } = noramlizationData;
+      /* 训练模型 */
       trainModel(model, inputs, labels).then(() => {
         console.log("train done");
+        /* 测试模型 */
+        testModel(model, this.output, noramlizationData);
       });
     },
     initData() {
