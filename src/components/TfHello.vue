@@ -1,96 +1,79 @@
 <template>
   <div align="center">
-    <h1>图表</h1>
-    <button @click="start" :disabled="intervalstatus">start</button>
-    <button @click="end" :disabled="!intervalstatus">end</button>
+    <h1>散点图 scatter</h1>
+    <button @click="run">run</button>
     <div ref="chart" class="chart"></div>
   </div>
 </template>
 
 <script>
 import echarts from "echarts";
+import * as tfvis from "@tensorflow/tfjs-vis";
+import * as tf from "@tensorflow/tfjs";
+
+import getTrainData from "../utils/traindata.js";
+import createModel from "../utils/model.js";
+
 export default {
-  name: "TfHello",
+  name: "ScatterChart",
   data() {
     return {
-      output: [1, 1, 1, 1],
-      interval: null,
-      intervalstatus: false
+      output: [[1, 1], [2, 3], [3, 5], [4, 7]]
     };
   },
-
   methods: {
-    start() {
-      this.initchart();
-    },
-    end() {
-      if (this.intervalstatus) {
-        clearInterval(this.interval);
-        this.intervalstatus = false;
-      }
-    },
-    setData() {
-      this.output.splice(
-        0,
-        this.output.length,
-        ...[Math.random(), Math.random(), Math.random(), Math.random()]
+    run() {
+      /* 创建模型并展示 */
+      let model = createModel();
+
+      tfvis.show.modelSummary(
+        { name: "Model summary", tab: "Model Inspection" },
+        model
       );
     },
-    setChart() {
-      let mychart = echarts.init(this.$refs.chart, "light");
+    initData() {
+      /* 获取训练数据 */
+      this.output = getTrainData();
+      this.initChart();
+    },
+    showInputVisor() {
+      const surface = tfvis
+        .visor()
+        .surface({ name: "My First Surface", tab: "Input Data" });
+      const data = [
+        { index: 0, value: 50 },
+        { index: 1, value: 100 },
+        { index: 2, value: 150 }
+      ];
+      tfvis.render.barchart(surface, data, {});
+    },
+    initChart() {
+      let mychart = echarts.init(this.$refs.chart);
       mychart.setOption({
         title: {
-          text: "数据拟合图表"
+          text: "horseopwer v mpg"
         },
-        // backgroundColor: "#2c343c",
-        // textStyle: {
-        //   color: "rgba(255,255,255,0.8)"
-        // },
-        // itemStyle: {
-        //   color: "rgb(177, 223, 222)"
-        // },
-        // visualMap: {
-        //   show: false,
-        //   min: 0,
-        //   max: 20,
-        //   inRange: {
-        //     colorLightness: [0, 1]
-        //   }
-        // },
-        tooltip: {},
         legend: {
           data: ["output"]
         },
-        xAxis: {
-          data: [1, 2, 3, 4]
-        },
-        yAxis: {},
+        xAxis: [{ name: "horsepower" }],
+        yAxis: [{ name: "mpg" }],
         series: [
           {
             name: "output",
-            type: "bar",
+            type: "scatter",
+            symbolsize: 20,
             data: this.output
           }
         ]
       });
-    },
-    initchart() {
-      this.interval = setInterval(() => {
-        this.setData();
-        this.setChart();
-      }, 1000);
-      this.intervalstatus = true;
     }
   },
   mounted() {
-    this.setChart();
+    this.initData();
   }
 };
 </script>
 
-<style scoped>
-.chart {
-  height: 400px;
-  width: 600px;
-}
+<style>
 </style>

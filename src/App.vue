@@ -27,4 +27,8 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+.chart {
+  height: 720px;
+  width: 1080px;
+}
 </style>
