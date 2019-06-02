@@ -23,7 +23,8 @@ export default {
   name: "ScatterChart",
   data() {
     return {
-      output: [[1, 1], [2, 3], [3, 5], [4, 7]]
+      originalData: [[1, 1], [2, 3], [3, 5], [4, 7]],
+      predictedData: [[50, 50]]
     };
   },
   methods: {
@@ -36,18 +37,26 @@ export default {
         model
       );
       /* 准备数据 */
-      let noramlizationData = convertToTensor(this.output);
+      let noramlizationData = convertToTensor(this.originalData);
       let { inputs, labels } = noramlizationData;
       /* 训练模型 */
       trainModel(model, inputs, labels).then(() => {
         console.log("train done");
         /* 测试模型 */
-        testModel(model, this.output, noramlizationData);
+        let predictedPoints = testModel(
+          model,
+          this.originalData,
+          noramlizationData
+        );
+        this.predictedData = predictedPoints.map((val, i) => {
+          return [val.x, val.y];
+        });
+        this.initChart();
       });
     },
     initData() {
       /* 获取训练数据 */
-      this.output = getTrainData();
+      this.originalData = getTrainData();
       this.initChart();
     },
     showInputVisor() {
@@ -68,16 +77,22 @@ export default {
           text: "horseopwer v mpg"
         },
         legend: {
-          data: ["output"]
+          data: ["original", "predicted"]
         },
         xAxis: [{ name: "horsepower" }],
         yAxis: [{ name: "mpg" }],
         series: [
           {
-            name: "output",
+            name: "original",
             type: "scatter",
             symbolsize: 20,
-            data: this.output
+            data: this.originalData
+          },
+          {
+            name: "predicted",
+            type: "scatter",
+            symbolsize: 20,
+            data: this.predictedData
           }
         ]
       });

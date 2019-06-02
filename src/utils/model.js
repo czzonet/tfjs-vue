@@ -3,6 +3,13 @@ import * as tfvis from "@tensorflow/tfjs-vis";
 export function createModel() {
   let model = tf.sequential();
   model.add(tf.layers.dense({ units: 1, inputShape: [1] }));
+  /* 6层非线性层 */
+  model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
   model.add(tf.layers.dense({ units: 1, }))
   return model
 }
@@ -73,6 +80,15 @@ export async function trainModel(model, inputs, labels) {
   })
 }
 
+/**
+ * 测试模型
+ *
+ * @param   {[type]}  model              [model description]
+ * @param   {[type]}  inputData          [inputData description]
+ * @param   {[type]}  normalizationData  [normalizationData description]
+ *
+ * @return  {[type]}                     [return description]
+ */
 export function testModel(model, inputData, normalizationData) {
   const { inputMax, inputMin, labelMax, labelMin } = normalizationData
 
@@ -85,7 +101,7 @@ export function testModel(model, inputData, normalizationData) {
 
     return [unNormXs.dataSync(), unNormPreds.dataSync()]
   })
-  // TODO: 返回echarts数据
+
   const predictedPoints = Array.from(xs).map((val, i) => {
     return { x: val, y: preds[i] }
   })
@@ -102,4 +118,5 @@ export function testModel(model, inputData, normalizationData) {
       height: 300
     }
   )
+  return predictedPoints
 }
