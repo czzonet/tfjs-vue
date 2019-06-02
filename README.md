@@ -3,6 +3,11 @@ echarts-vue
 
 在vue中使用echarts图表的例子。
 
+演示
+--
+
+![](./echarts-vue.gif)
+
 起步
 --
 ```
