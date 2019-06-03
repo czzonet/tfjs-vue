@@ -17,7 +17,7 @@ import {
   convertToTensor,
   trainModel,
   testModel
-} from "../utils/model.js";
+} from "../utils/model2d.js";
 
 export default {
   name: "Scatter2d",
