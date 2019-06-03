@@ -3,6 +3,14 @@ import App from './App.vue'
 
 Vue.config.productionTip = false
 
+/* 注册路由标签 */
+import VueRouter from 'vue-router'
+Vue.use(VueRouter)
+
+/* 导入配置的路由对象 */
+import router from './router'
+
 new Vue({
+  router,
   render: h => h(App),
 }).$mount('#app')

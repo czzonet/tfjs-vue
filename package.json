@@ -12,7 +12,9 @@
     "@tensorflow/tfjs-vis": "^1.1.0",
     "core-js": "^2.6.5",
     "echarts": "^4.2.1",
-    "vue": "^2.6.10"
+    "echarts-gl": "^1.1.1",
+    "vue": "^2.6.10",
+    "vue-router": "^3.0.6"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.8.0",

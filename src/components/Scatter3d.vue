@@ -1,6 +1,6 @@
 <template>
   <div align="center">
-    <h1>散点图 scatter</h1>
+    <h1>3d散点图 scatter3d</h1>
     <button @click="run">run</button>
     <div ref="chart" class="chart"></div>
   </div>
@@ -8,23 +8,26 @@
 
 <script>
 import echarts from "echarts";
+/* 3d包要额外引入 */
+import "echarts-gl";
+
 import * as tfvis from "@tensorflow/tfjs-vis";
 import * as tf from "@tensorflow/tfjs";
 
-import getTrainData from "../utils/traindata.js";
 import {
+  getTrainData,
   createModel,
   convertToTensor,
   trainModel,
   testModel
-} from "../utils/model.js";
+} from "../utils/model3d.js";
 
 export default {
-  name: "ScatterChart",
+  name: "Scatter3d",
   data() {
     return {
-      originalData: [[1, 1], [2, 3], [3, 5], [4, 7]],
-      predictedData: [[50, 50]]
+      originalData: [],
+      predictedData: []
     };
   },
   methods: {
@@ -48,50 +51,45 @@ export default {
           this.originalData,
           noramlizationData
         );
-        this.predictedData = predictedPoints.map((val, i) => {
-          return [val.x, val.y];
+        // console.log("predictedPoints: ", JSON.stringify(predictedPoints));
+        let { xs, preds } = predictedPoints;
+        let fresh = Array.from(preds).map((val, i) => {
+          let tmp = [];
+          tmp.push(xs[2 * i]);
+          tmp.push(xs[2 * i + 1]);
+          tmp.push(val);
+          return tmp;
         });
-        this.initChart();
+        // console.log("fresh: ", fresh);
+        this.predictedData = fresh;
+        this.setChart();
       });
     },
-    initData() {
-      /* 获取训练数据 */
-      this.originalData = getTrainData();
-      this.initChart();
-    },
-    showInputVisor() {
-      const surface = tfvis
-        .visor()
-        .surface({ name: "My First Surface", tab: "Input Data" });
-      const data = [
-        { index: 0, value: 50 },
-        { index: 1, value: 100 },
-        { index: 2, value: 150 }
-      ];
-      tfvis.render.barchart(surface, data, {});
-    },
-    initChart() {
-      let mychart = echarts.init(this.$refs.chart);
-      mychart.setOption({
+    setChart() {
+      let chart = echarts.init(this.$refs.chart);
+      chart.setOption({
         title: {
-          text: "horseopwer v mpg"
+          text: "3d chart"
         },
         legend: {
           data: ["original", "predicted"]
         },
-        xAxis: [{ name: "horsepower" }],
-        yAxis: [{ name: "mpg" }],
+        backgroundColor: "rgb(243, 242, 243)",
+        grid3D: {},
+        xAxis3D: [{ name: "x" }],
+        yAxis3D: [{ name: "y" }],
+        zAxis3D: [{ name: "z" }],
         series: [
           {
             name: "original",
-            type: "scatter",
-            symbolsize: 20,
+            type: "scatter3D",
+            dimensions: ["x", "y", "z"],
             data: this.originalData
           },
           {
             name: "predicted",
-            type: "scatter",
-            symbolsize: 20,
+            type: "scatter3D",
+            dimensions: ["x", "y", "z"],
             data: this.predictedData
           }
         ]
@@ -99,7 +97,8 @@ export default {
     }
   },
   mounted() {
-    this.initData();
+    this.originalData = getTrainData();
+    this.setChart();
   }
 };
 </script>
