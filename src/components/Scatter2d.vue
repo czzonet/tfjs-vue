@@ -1,6 +1,6 @@
 <template>
   <div align="center">
-    <h1>散点图 scatter</h1>
+    <h1>2d散点图 scatter2d</h1>
     <button @click="run">run</button>
     <div ref="chart" class="chart"></div>
   </div>
@@ -20,7 +20,7 @@ import {
 } from "../utils/model.js";
 
 export default {
-  name: "ScatterChart",
+  name: "Scatter2d",
   data() {
     return {
       originalData: [[1, 1], [2, 3], [3, 5], [4, 7]],

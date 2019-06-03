@@ -1,20 +1,15 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <tf-hello></tf-hello>
+    <router-link to="/scatter2d">2d 散点图</router-link>
+    <span>&nbsp;|&nbsp;</span>
+    <router-link to="/scatter3d">3d 散点图</router-link>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
-import TfHello from "./components/TfHello";
 export default {
-  name: "app",
-  components: {
-    HelloWorld,
-    TfHello
-  }
+  name: "app"
 };
 </script>
 
