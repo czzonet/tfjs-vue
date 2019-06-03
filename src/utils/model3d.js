@@ -37,9 +37,12 @@ import * as tf from "@tensorflow/tfjs";
 import * as tfvis from "@tensorflow/tfjs-vis";
 export function createModel() {
   let model = tf.sequential();
-  model.add(tf.layers.dense({ units: 1, inputShape: [2] }));
+  model.add(tf.layers.dense({ units: 2, inputShape: [2] }));
   // /* 6层非线性层 */
-  // model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
   // model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
   // model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
   // model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
