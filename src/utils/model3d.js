@@ -128,8 +128,19 @@ export function testModel(model, inputData, normalizationData) {
   const { inputMax, inputMin, labelMax, labelMin } = normalizationData
 
   const [xs, preds] = tf.tidy(() => {
-    const xs = tf.linspace(0, 1, 200)
-    const preds = model.predict(xs.reshape([100, 2]))
+    /* 横坐标取20个均分 */
+    let x = Array.from({ length: 20 }, (val, i) => i).map(d => d / 20)
+    let fresh = []
+    for (let i = 0; i < 20; i++) {
+      for (let j = 0; j < 20; j++) {
+        /* 每个点的x，y值 */
+        fresh.push(x[i])
+        fresh.push(x[j])
+      }
+    }
+    /* 生成20x20的均匀散点 共400个 */
+    let xs = tf.tensor2d(fresh, [400, 2])
+    const preds = model.predict(xs)
 
     const unNormXs = xs.mul(inputMax.sub(inputMin)).add(inputMin)
     const unNormPreds = preds.mul(labelMax.sub(labelMin)).add(labelMin)
