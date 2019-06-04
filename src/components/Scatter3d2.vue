@@ -1,7 +1,7 @@
 <template>
   <div align="center">
-    <h1>3d散点图 scatter3d</h1>
-    <h2>两个自变量，一个因变量</h2>
+    <h1>3d散点图2 scatter3d2</h1>
+    <h2>一个自变量，两个因变量</h2>
     <button @click="run">run</button>
     <div ref="chart" class="chart"></div>
   </div>
@@ -21,7 +21,7 @@ import {
   convertToTensor,
   trainModel,
   testModel
-} from "../utils/model3d.js";
+} from "../utils/model3d2.js";
 
 export default {
   name: "Scatter3d",
@@ -42,6 +42,7 @@ export default {
       );
       /* 准备数据 */
       let noramlizationData = convertToTensor(this.originalData);
+      // console.log("noramlizationData: ", noramlizationData.labelMax.print());
       let { inputs, labels } = noramlizationData;
       /* 训练模型 */
       trainModel(model, inputs, labels).then(() => {
@@ -52,12 +53,12 @@ export default {
           this.originalData,
           noramlizationData
         );
-        // console.log("predictedPoints: ", JSON.stringify(predictedPoints));
         let { xs, preds } = predictedPoints;
-        let fresh = Array.from(preds).map((val, i) => {
+        console.log("preds: ", preds);
+        let fresh = Array.from(xs).map((val, i) => {
           let tmp = [];
-          tmp.push(xs[2 * i]);
-          tmp.push(xs[2 * i + 1]);
+          tmp.push(preds[2 * i]);
+          tmp.push(preds[2 * i + 1]);
           tmp.push(val);
           return tmp;
         });
@@ -70,7 +71,7 @@ export default {
       let chart = echarts.init(this.$refs.chart);
       chart.setOption({
         title: {
-          text: "3d chart--input (x,y),output z"
+          text: "3d chart2--input z,output (x,y)"
         },
         legend: {
           data: ["original", "predicted"]

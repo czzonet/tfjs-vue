@@ -3,6 +3,8 @@
     <router-link to="/scatter2d">2d 散点图</router-link>
     <span>&nbsp;|&nbsp;</span>
     <router-link to="/scatter3d">3d 散点图</router-link>
+    <span>&nbsp;|&nbsp;</span>
+    <router-link to="/scatter3d2">3d 散点图2</router-link>
     <router-view></router-view>
   </div>
 </template>
