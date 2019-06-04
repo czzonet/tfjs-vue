@@ -1,6 +1,7 @@
 <template>
   <div align="center">
     <h1>2d散点图 scatter2d</h1>
+    <h2>一个自变量，一个因变量</h2>
     <button @click="run">run</button>
     <div ref="chart" class="chart"></div>
   </div>
