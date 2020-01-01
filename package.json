@@ -16,6 +16,8 @@
     "element-ui": "^2.13.0",
     "node-sass": "^4.13.0",
     "sass-loader": "^8.0.0",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.4",
     "vue": "^2.6.10",
     "vue-router": "^3.0.6"
   },
