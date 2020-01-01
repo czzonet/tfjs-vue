@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noImplicitReturns": true,
+    "lib": ["es6", "dom"],
+    "typeRoots": ["./node_modules/@types", "./src/util"]
+  },
+  "include": ["./**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts", "*.js"]
+}
