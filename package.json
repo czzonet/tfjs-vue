@@ -13,6 +13,9 @@
     "core-js": "^3",
     "echarts": "^4.2.1",
     "echarts-gl": "^1.1.1",
+    "element-ui": "^2.13.0",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
     "vue": "^2.6.10",
     "vue-router": "^3.0.6"
   },
