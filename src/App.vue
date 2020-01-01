@@ -1,11 +1,8 @@
 <template>
   <div id="app">
-    <router-link to="/scatter2d">2d 散点图</router-link>
-    <span>&nbsp;|&nbsp;</span>
-    <router-link to="/scatter3d">3d 散点图</router-link>
-    <span>&nbsp;|&nbsp;</span>
-    <router-link to="/scatter3d2">3d 散点图2</router-link>
-    <router-view></router-view>
+    <transition name="fade" mode="out-in">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -22,10 +19,19 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  /* margin-top: 60px; */
+  height: 100%;
 }
 .chart {
   height: 720px;
   width: 1080px;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
