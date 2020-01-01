@@ -2,7 +2,9 @@
   <div align="center">
     <h1>2d散点图 scatter2d</h1>
     <h2>一个自变量，一个因变量</h2>
-    <button @click="run">run</button>
+    <el-button @click="run" type="primary">train</el-button>
+    <br />
+    <br />
     <div ref="chart" class="chart"></div>
   </div>
 </template>
@@ -12,13 +14,13 @@ import echarts from "echarts";
 import * as tfvis from "@tensorflow/tfjs-vis";
 import * as tf from "@tensorflow/tfjs";
 
-import getTrainData from "../utils/traindata.js";
+import getTrainData from "./lib/traindata.ts";
 import {
   createModel,
   convertToTensor,
   trainModel,
   testModel
-} from "../utils/model2d.js";
+} from "./lib/model.ts";
 
 export default {
   name: "Scatter2d",

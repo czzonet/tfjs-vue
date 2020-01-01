@@ -1,4 +1,4 @@
-import Scatter2d from "../components/Scatter2d.vue";
+import Scatter2d from "@/components/scatter2d/index";
 import Scatter3d from "../components/Scatter3d.vue";
 import Scatter3d2 from "../components/Scatter3d2.vue";
 import BarLayout from "@/components/layout/index";
