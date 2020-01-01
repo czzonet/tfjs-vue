@@ -10,7 +10,7 @@
   "dependencies": {
     "@tensorflow/tfjs": "^1.1.2",
     "@tensorflow/tfjs-vis": "^1.1.0",
-    "core-js": "^2.6.5",
+    "core-js": "^3",
     "echarts": "^4.2.1",
     "echarts-gl": "^1.1.1",
     "vue": "^2.6.10",
