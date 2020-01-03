@@ -1,6 +1,4 @@
 import * as tf from "@tensorflow/tfjs";
-import * as tfvis from "@tensorflow/tfjs-vis";
-import { Message } from 'element-ui'
 
 export const createModel = () => {
   let model = tf.sequential();

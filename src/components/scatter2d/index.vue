@@ -27,7 +27,6 @@
 
 <script>
 import echarts from "echarts";
-import * as tfvis from "@tensorflow/tfjs-vis";
 import * as tf from "@tensorflow/tfjs";
 
 import getTrainData from "./lib/traindata.ts";
