@@ -2,10 +2,21 @@
   <div align="center">
     <h1>2d散点图（一个自变量，一个因变量）</h1>
 
-    <h3>
-      horseopwer: 马力 ;mpg: Miles per gallon，每加仑燃油行驶公里数
-      <el-button @click="run" type="primary">开始训练-train</el-button>
-    </h3>
+    <h3>horseopwer: 马力 ;mpg: Miles per gallon，每加仑燃油行驶公里数</h3>
+
+    <p>
+      <el-form label-width="100px" inline>
+        <el-form-item label="batchSize">
+          <el-input-number v-model="batchSize"></el-input-number>
+        </el-form-item>
+        <el-form-item label="epotch">
+          <el-input-number v-model="epotch"></el-input-number>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="run" type="primary" :disabled="isTraining">开始训练-train</el-button>
+        </el-form-item>
+      </el-form>
+    </p>
 
     <div class="oneline">
       <div ref="chart" class="chart"></div>
@@ -35,7 +46,10 @@ export default {
       predictedData: [[50, 0]],
       lossData: [],
       mseData: [],
-      chartPerformance: null
+      chartPerformance: null,
+      batchSize: 28,
+      epotch: 50,
+      isTraining: false
     };
   },
   methods: {
@@ -43,15 +57,31 @@ export default {
       /* 创建模型并展示 */
       let model = createModel();
 
-      // tfvis.show.modelSummary(
-      //   { name: "Model summary", tab: "Model Inspection" },
-      //   model
-      // );
       /* 准备数据 */
       let noramlizationData = convertToTensor(this.originalData);
       let { inputs, labels } = noramlizationData;
+      /** callbacks when training */
+      let callbacks = {
+        onTrainBegin: logs => {
+          console.log("onTrainBegin: ", logs);
+          this.$message.info("Train start!");
+          this.isTraining = true;
+        },
+        onTrainEnd: logs => {
+          console.log("onTrainEnd: ", logs);
+          this.$message.info("Train end");
+          this.isTraining = false;
+        },
+        onEpochEnd: (epoch, logs) => {
+          // console.log('onEpochBegin: ', epoch, logs);
+          this.lossData.push([epoch, logs.loss]);
+          this.mseData.push([epoch, logs.mse]);
+          /** refresh the performance chart */
+          this.setChartPerformance();
+        }
+      };
       /* 训练模型 */
-      trainModel(model, inputs, labels, this.chartPerformance).then(() => {
+      trainModel(model, inputs, labels, callbacks).then(() => {
         console.log("train done");
         /* 测试模型 */
         let predictedPoints = testModel(
@@ -65,7 +95,6 @@ export default {
         this.initChart();
       });
     },
-
     showInputVisor() {
       const surface = tfvis
         .visor()
@@ -108,10 +137,14 @@ export default {
       });
     },
     /**
-     * 配置和绘制图表 运行表现
+     * 配置和绘制运行表现图表
      */
-    initChartPerformance() {
-      this.chartPerformance = echarts.init(this.$refs.performance);
+    setChartPerformance() {
+      /** init charft object once */
+      this.chartPerformance
+        ? null
+        : (this.chartPerformance = echarts.init(this.$refs.performance));
+      /** set style and dataset */
       this.chartPerformance.setOption({
         title: {
           text: "Training Performance"
@@ -124,14 +157,14 @@ export default {
         series: [
           {
             name: "loss",
-            type: "scatter",
-            symbolsize: 20,
+            type: "line",
+            smooth: true,
             data: this.lossData
           },
           {
             name: "mse",
-            type: "scatter",
-            symbolsize: 20,
+            type: "line",
+            smooth: true,
             data: this.mseData
           }
         ]
@@ -142,7 +175,7 @@ export default {
     /* 获取训练数据 */
     this.originalData = getTrainData();
     this.initChart();
-    this.initChartPerformance();
+    this.setChartPerformance();
   }
 };
 </script>

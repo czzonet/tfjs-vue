@@ -65,7 +65,7 @@ export const convertToTensor = (data: number[][]) => {
 /**
  * 训练模型
  */
-export const trainModel = async (model: any, inputs: any, labels: any, mychart: any) => {
+export const trainModel = async (model: any, inputs: any, labels: any, callbacks: any) => {
   model.compile({
     optimizer: tf.train.adam(),
     loss: tf.losses.meanSquaredError,
@@ -74,11 +74,6 @@ export const trainModel = async (model: any, inputs: any, labels: any, mychart: 
 
   const batchSize = 28
   const epochs = 50
-
-
-  let lossData = [] as any[]
-  let mseData = [] as any[]
-
 
 
   let t = await model.fit(inputs, labels, {
@@ -90,47 +85,8 @@ export const trainModel = async (model: any, inputs: any, labels: any, mychart: 
     //   ['loss', 'mse'],
     //   { height: 200, callbacks: ['onEpochEnd'] }
     // ),
-    callbacks: {
-      onTrainBegin: (logs: any) => {
-        console.log('onTrainBegin: ', logs);
-        Message.info('Train start!')
+    callbacks
 
-      },
-      onTrainEnd: (logs: any) => {
-        console.log('onTrainEnd: ', logs);
-        Message.info('Train end')
-      },
-      onEpochEnd: (epoch: any, logs: any) => {
-        // console.log('onEpochBegin: ', epoch, logs);
-        lossData.push([epoch, logs.loss])
-        mseData.push([epoch, logs.mse])
-
-        mychart.setOption({
-          title: {
-            text: "Training Performance"
-          },
-          legend: {
-            data: ["loss", "mse"]
-          },
-          xAxis: [{ name: "epotch" }],
-          yAxis: [{ name: "value" }],
-          series: [
-            {
-              name: "loss",
-              type: "line",
-              smooth: true,
-              data: lossData
-            },
-            {
-              name: "mse",
-              type: "line",
-              smooth: true,
-              data: mseData
-            }
-          ]
-        });
-      }
-    }
   })
 
   return t
@@ -159,14 +115,14 @@ export const testModel = (model: any, inputData: any, normalizationData: any) =>
     return { x: d[0], y: d[1] }
   })
 
-  tfvis.render.scatterplot(
-    { name: 'Model Predictions vs Original Data' },
-    { values: [originalPoints, predictedPoints], series: ['original', 'predicted'] },
-    {
-      xLabel: 'horsepower',
-      yLabel: 'mpg',
-      height: 300
-    }
-  )
+  // tfvis.render.scatterplot(
+  //   { name: 'Model Predictions vs Original Data' },
+  //   { values: [originalPoints, predictedPoints], series: ['original', 'predicted'] },
+  //   {
+  //     xLabel: 'horsepower',
+  //     yLabel: 'mpg',
+  //     height: 300
+  //   }
+  // )
   return predictedPoints
 }
