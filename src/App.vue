@@ -23,8 +23,8 @@ export default {
   height: 100%;
 }
 .chart {
-  height: 720px;
-  width: 1080px;
+  height: 680px;
+  width: 800px;
 }
 .fade-enter-active,
 .fade-leave-active {
