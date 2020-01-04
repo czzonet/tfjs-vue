@@ -55,12 +55,12 @@ export const createModel = () => {
   /** Here is the input layer,must has specify inputshape */
   model.add(tf.layers.dense({ units: 1, inputShape: [1] }));
   /* Here are any hidden layers 6层非线性层 */
-  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
-  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
-  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
-  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
-  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
-  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
+  // model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
+  // model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
+  // model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
+  // model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
+  // model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
   /** Output layer */
   model.add(tf.layers.dense({ units: 1, }))
 
