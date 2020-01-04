@@ -1,6 +1,52 @@
 import * as tf from "@tensorflow/tfjs";
 
 /**
+  *  归一化
+  */
+const normalize = (s: tf.Tensor2D) => {
+  const t = tf.tidy(() => { /** 最大差 */
+    const distance = s.max().sub(s.min())
+    /** 除数为零检查 */
+    let zeroCheck = distance.dataSync()[0] == 0
+    /** 为0不进行归一化 */
+    return zeroCheck ? s : s.sub(s.min()).div(distance)
+  })
+
+  return t
+}
+
+/**
+  *  反归一化
+  */
+const unNormalize = (s: any, minS: any, maxS: any) => {
+  const t = tf.tidy(() => {
+    return s.mul(maxS.sub(minS)).add(minS)
+  })
+
+  return t
+}
+
+/**
+ * 分离点坐标为xs,ys  
+ */
+const splitPoint = (s: number[][]) => {
+  let xs = s.map(d => d[0])
+  let ys = s.map(d => d[1])
+  return [xs, ys]
+}
+
+/**
+ * 合并生成点坐标为[x,y]
+ */
+const combinePoint = (xs: number[], ys: number[]) => {
+  let t = Array.from(xs).map((d, i) => {
+    return [xs[i], ys[i]]
+  })
+
+  return t
+}
+
+/**
  * createModel
  */
 export const createModel = () => {
@@ -30,29 +76,15 @@ export const convertToTensor = (data: number[][]) => {
     tf.util.shuffle(data);
 
     /** 数组对里提取分离x，y */
-    const inputs = data.map(d => d[0])
-    const labels = data.map(d => d[1])
+    const [inputs, labels] = splitPoint(data)
 
     /** 形状要符合长度 数组两层嵌套二维所以2d */
     const inputTensor = tf.tensor2d(inputs, [inputs.length, 1])
     const labelTensor = tf.tensor2d(labels, [labels.length, 1])
 
-    /**
-     *  归一化
-     */
-    const normalize = (s: tf.Tensor2D) => {
-      /** 最大差 */
-      const distance = s.max().sub(s.min())
-      /** 除数为零检查 */
-      let zeroCheck = distance.dataSync()[0] == 0
-      /** 为0不进行归一化 */
-      const t = zeroCheck ? s : s.sub(s.min()).div(distance)
-
-      return t
-    }
-
     let t = {} as any;
 
+    /** 归一化 并保存范围信息用于以后反归一化 */
     t.inputMax = inputTensor.max()
     t.inputMin = inputTensor.min()
     t.labelMax = labelTensor.max()
@@ -69,60 +101,48 @@ export const convertToTensor = (data: number[][]) => {
 /**
  * 训练模型
  */
-export const trainModel = async ({ model, inputs, labels, callbacks, batchSize, epochs }: any) => {
-  model.compile({
-    optimizer: tf.train.adam(),
-    loss: tf.losses.meanSquaredError,
-    metrics: ['mse']
-  })
+export const trainModel = async ({ model, normalizationData, config }: any) => {
+  try {
+    /** 配置优化器 损失函数 */
+    model.compile({
+      optimizer: tf.train.adam(),
+      loss: tf.losses.meanSquaredError,
+      metrics: ['mse']
+    })
+    let { inputs, labels } = normalizationData
 
-  let t = await model.fit(inputs, labels, {
-    batchSize,
-    epochs,
-    shuffle: true,
-    // callbacks: tfvis.show.fitCallbacks(
-    //   { name: 'Training Performance' },
-    //   ['loss', 'mse'],
-    //   { height: 200, callbacks: ['onEpochEnd'] }
-    // ),
-    callbacks
 
-  })
+    /** 训练 调整所有可变 */
+    let t = await model.fit(inputs, labels, config)
 
-  return t
+    return t
+  } catch (error) {
+    console.log('[E] [trainModel]: ', error);
+
+  }
 }
 
 /**
  * 测试模型
  */
-export const testModel = (model: any, inputData: any, normalizationData: any) => {
+export const testModel = (model: any, normalizationData: any) => {
   const { inputMax, inputMin, labelMax, labelMin } = normalizationData
 
   const [xs, preds] = tf.tidy(() => {
+    /** 生成测试数值 */
     const xs = tf.linspace(0, 1, 100)
+    /** 控制形状并预测结果 */
     const preds = model.predict(xs.reshape([100, 1]))
 
-    const unNormXs = xs.mul(inputMax.sub(inputMin)).add(inputMin)
-    const unNormPreds = preds.mul(labelMax.sub(labelMin)).add(labelMin)
+    /** 反归一化 */
+    const unNormXs = unNormalize(xs, inputMin, inputMax)
+    const unNormPreds = unNormalize(preds, labelMin, labelMax)
 
+    /** 获取实际数值返回 */
     return [unNormXs.dataSync(), unNormPreds.dataSync()]
   })
 
-  const predictedPoints = Array.from(xs).map((val, i) => {
-    return { x: val, y: preds[i] }
-  })
-  const originalPoints = inputData.map((d: any) => {
-    return { x: d[0], y: d[1] }
-  })
+  const predictedPoints = combinePoint(xs, preds)
 
-  // tfvis.render.scatterplot(
-  //   { name: 'Model Predictions vs Original Data' },
-  //   { values: [originalPoints, predictedPoints], series: ['original', 'predicted'] },
-  //   {
-  //     xLabel: 'horsepower',
-  //     yLabel: 'mpg',
-  //     height: 300
-  //   }
-  // )
   return predictedPoints
 }
