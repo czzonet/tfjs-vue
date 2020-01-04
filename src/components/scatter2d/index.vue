@@ -9,8 +9,8 @@
         <el-form-item label="batchSize">
           <el-input-number v-model="batchSize"></el-input-number>
         </el-form-item>
-        <el-form-item label="epotch">
-          <el-input-number v-model="epotch"></el-input-number>
+        <el-form-item label="epochs">
+          <el-input-number v-model="epochs"></el-input-number>
         </el-form-item>
         <el-form-item>
           <el-button @click="run" type="primary" :disabled="isTraining">开始训练-train</el-button>
@@ -47,7 +47,7 @@ export default {
       mseData: [],
       chartPerformance: null,
       batchSize: 28,
-      epotch: 50,
+      epochs: 50,
       isTraining: false
     };
   },
@@ -62,13 +62,13 @@ export default {
       /** callbacks when training */
       let callbacks = {
         onTrainBegin: logs => {
-          console.log("onTrainBegin: ", logs);
-          this.$message.info("Train start!");
+          console.log("onTrainBegin: ");
+          this.$message.success("Train start!");
           this.isTraining = true;
         },
         onTrainEnd: logs => {
-          console.log("onTrainEnd: ", logs);
-          this.$message.info("Train end");
+          console.log("onTrainEnd: ");
+          this.$message.success("Train end!");
           this.isTraining = false;
         },
         onEpochEnd: (epoch, logs) => {
@@ -80,7 +80,14 @@ export default {
         }
       };
       /* 训练模型 */
-      trainModel(model, inputs, labels, callbacks).then(() => {
+      trainModel({
+        model,
+        inputs,
+        labels,
+        callbacks,
+        batchSize: this.batchSize,
+        epochs: this.epochs
+      }).then(() => {
         console.log("train done");
         /* 测试模型 */
         let predictedPoints = testModel(
