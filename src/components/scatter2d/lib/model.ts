@@ -1,16 +1,21 @@
 import * as tf from "@tensorflow/tfjs";
 
+/**
+ * createModel
+ */
 export const createModel = () => {
+  /** Define model,add one layer after another,which do tidy automatically. */
   let model = tf.sequential();
-
+  /** Here is the input layer,must has specify inputshape */
   model.add(tf.layers.dense({ units: 1, inputShape: [1] }));
-  /* 6层非线性层 */
+  /* Here are any hidden layers 6层非线性层 */
   model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
   model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
-  // model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
-  // model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
-  // model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
-  // model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
+  model.add(tf.layers.dense({ units: 50, activation: 'relu' }))
+  /** Output layer */
   model.add(tf.layers.dense({ units: 1, }))
 
   return model
@@ -20,6 +25,7 @@ export const createModel = () => {
  * 准备数据 规范化
  */
 export const convertToTensor = (data: number[][]) => {
+  /** use tidy to clean memory */
   const t = tf.tidy(() => {
     tf.util.shuffle(data);
 
@@ -63,16 +69,12 @@ export const convertToTensor = (data: number[][]) => {
 /**
  * 训练模型
  */
-export const trainModel = async (model: any, inputs: any, labels: any, callbacks: any) => {
+export const trainModel = async ({ model, inputs, labels, callbacks, batchSize, epochs }: any) => {
   model.compile({
     optimizer: tf.train.adam(),
     loss: tf.losses.meanSquaredError,
     metrics: ['mse']
   })
-
-  const batchSize = 28
-  const epochs = 50
-
 
   let t = await model.fit(inputs, labels, {
     batchSize,

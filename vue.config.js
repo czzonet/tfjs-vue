@@ -1,19 +1,19 @@
 module.exports = {
   // productionSourceMap: false,
   devServer: {
-    proxy: {
-      // 匹配 api 前缀
-      "/api": {
-        target: "http://localhost:6002/",
-        changeOrigin: true,
-        ws: true
-      },
-      "/public": {
-        target: "http://localhost:6002/",
-        changeOrigin: true,
-        ws: true
-      }
-    },
+    // proxy: {
+    //   // 匹配 api 前缀
+    //   "/api": {
+    //     target: "http://localhost:6002/",
+    //     changeOrigin: true,
+    //     ws: true
+    //   },
+    //   "/public": {
+    //     target: "http://localhost:6002/",
+    //     changeOrigin: true,
+    //     ws: true
+    //   }
+    // },
     disableHostCheck: true,
     overlay: {
       warnings: false,
