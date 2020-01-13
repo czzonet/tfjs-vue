@@ -58,7 +58,7 @@ export default {
       lossData: [],
       mseData: [],
       batchSize: 28,
-      epochs: 50,
+      epochs: 20,
       isTraining: false
     };
   },
@@ -154,7 +154,9 @@ export default {
     },
     /**
      * 配置和绘制运行表现图表
-     */ setChartPerformanceMse() {
+     */
+
+    setChartPerformanceMse() {
       /** set style and dataset */
       this.chartPerformanceMse.setOption({
         title: {
