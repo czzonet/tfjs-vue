@@ -1,6 +1,6 @@
 # tfjs-echarts-vue
 
-![](./home.png)
+![home](./home.png)
 
 在 vue 中使用 echarts 图表展示机器学习的例子。tfjs 是 tensorflow 的 js 实现，使得可以用浏览器进行机器学习。  
 感觉非常好用，或者说简直不要太棒，完全符合自己已有技术和发展需求。所以赶紧参考官方实例实践了一遍，预测了 2d 数据，并拿 echarts 散点图重新可视化了数据。  
@@ -17,19 +17,25 @@
 
 - [x] 20200101: 升级界面，交互
 - [x] 20200101: typescript 重构【1/3】
+- [x] 20200113: 升级图表组件化，代码逻辑更清晰分明
 
 ## 演示
 
 二维数据拟合--一对一输入输出
-![](./scatter2d.png)
+
+![二维数据拟合--一对一输入输出](./2d.png)
+
 三维数据拟合--多输入
-![](./scatter3d.png)
+
+![三维数据拟合--多输入](./scatter3d.png)
+
 三维数据拟合 2--多输出
-![](./scatter3d2.png)
+
+![三维数据拟合 2--多输出](./scatter3d2.png)
 
 ## 直接使用
 
-```
+```sh
 yarn
 yarn serve
 ```
@@ -40,7 +46,7 @@ yarn serve
 
 如果你想从头走一遍
 
-```
+```sh
 vue create echarts-vue
 cd echarts-vue
 yarn add echarts
