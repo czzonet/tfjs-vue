@@ -1,8 +1,6 @@
 <template>
   <div align="center">
-    <h1>2d散点图（一个自变量，一个因变量）</h1>
-
-    <!-- <h3>horseopwer: 马力 ;mpg: Miles per gallon，每加仑燃油行驶公里数</h3> -->
+    <h1>马力(x)与每加仑燃油行驶公里数(y)的关系：y=f(x)</h1>
 
     <p>
       训练数据 总数量：{{originalData.length+1}}
@@ -11,13 +9,25 @@
           <el-input-number v-model="batchSize"></el-input-number>
         </el-form-item>
         <el-form-item label="epochs">
-          <el-input-number v-model="epochs"></el-input-number>
+          <el-input-number v-model="epochs" :min="1"></el-input-number>
         </el-form-item>
         <el-form-item>
-          <el-button @click="run" type="primary" :disabled="isTraining">开始训练-train</el-button>
+          <el-button
+            @click="run"
+            type="primary"
+            :disabled="isTraining"
+            icon="el-icon-video-play"
+          >Train</el-button>
         </el-form-item>
       </el-form>
     </p>
+
+    <div class="process">
+      <div class="label">训练进度：</div>
+      <div class="content">
+        <el-progress :percentage="processPercent" style="width:100"></el-progress>
+      </div>
+    </div>
 
     <div class="one-row">
       <div class="col1">
@@ -57,20 +67,37 @@ export default {
   components: { ChartData, ChartPerformanceLoss, ChartPerformanceMse },
   data() {
     return {
-      originalData: [[1, 1], [2, 3], [3, 5], [4, 7]],
-      predictedData: [[50, 0]],
+      /** 原始数据点的坐标数组，例如[[0,0]] */
+      originalData: [],
+      /** 预测数据点的坐标数组 */
+      predictedData: [],
+      /** 损失与epoch的坐标数组 */
       lossData: [],
+      /** mse与epoch的坐标数组 */
       mseData: [],
+      /** 批次大小 */
       batchSize: 28,
+      /** 纪元次数 */
       epochs: 20,
+      /** 当前纪元 */
+      epochCurrent: -1,
+      /** 训练运行标志 */
       isTraining: false
     };
+  },
+  computed: {
+    processPercent() {
+      return parseInt(
+        (((this.epochCurrent + 1) * 100) / this.epochs).toFixed(0)
+      );
+    }
   },
   methods: {
     /**
      * 清空数组数据
      */
     reset() {
+      this.epochCurrent = -1;
       this.predictedData.splice(0, this.predictedData.length);
       this.lossData.splice(0, this.lossData.length);
       this.mseData.splice(0, this.mseData.length);
@@ -94,6 +121,7 @@ export default {
           this.isTraining = false;
         },
         onEpochEnd: (epoch, logs) => {
+          this.epochCurrent = epoch;
           this.lossData.push([epoch, logs.loss]);
           this.mseData.push([epoch, logs.mse]);
         }
@@ -106,12 +134,14 @@ export default {
         callbacks
       };
 
-      /* 训练模型 */
-      trainModel({ model, normalizationData, config }).then(() => {
-        /* 测试模型 */
-        this.predictedData = testModel(model, normalizationData);
-        // this.setDataChart();
-      });
+      /** 延时以提高按钮的响应速度 */
+      setTimeout(() => {
+        /* 训练模型 */
+        trainModel({ model, normalizationData, config }).then(() => {
+          /* 测试模型 */
+          this.predictedData = testModel(model, normalizationData);
+        });
+      }, 1000);
     }
   },
   mounted() {
@@ -141,6 +171,21 @@ export default {
       justify-content: flex-start;
       align-items: center;
     }
+  }
+}
+
+.process {
+  width: 600px;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  .label {
+    flex-basis: 100px;
+  }
+  .content {
+    flex: 1;
   }
 }
 </style>
