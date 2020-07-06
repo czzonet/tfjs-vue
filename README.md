@@ -2,7 +2,7 @@
 
 ![home](./home.png)
 
-[线上地址](http://czzonet.co:3000/index.html)
+[线上地址](http://czzonet.com:3000/index.html)
 
 在 vue 中使用 echarts 图表展示机器学习的例子。tfjs 是 tensorflow 的 js 实现，使得可以用浏览器进行机器学习。  
 感觉非常好用，或者说简直不要太棒，完全符合自己已有技术和发展需求。所以赶紧参考官方实例实践了一遍，预测了 2d 数据，并拿 echarts 散点图重新可视化了数据。  
